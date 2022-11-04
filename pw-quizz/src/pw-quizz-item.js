@@ -38,6 +38,7 @@ export class PwQuizzItem extends LitElement {
 
   static get properties() {
     return {
+      isLast: { type: Boolean, attribute: 'is-last', reflect: true },
       value: { type: Object },
       isCorrect: { type: Boolean },
       counterCorrect: { type: Number },
@@ -72,14 +73,28 @@ export class PwQuizzItem extends LitElement {
             @click=${this.onPrev}
           ></pw-quizz-button>
 
-          <pw-quizz-button title="Next" @click=${this.onNext}></pw-quizz-button>
+          ${this.isLast
+            ? html`<pw-quizz-button
+                title="Finalizar"
+                @click=${this.finalized}
+              ></pw-quizz-button>`
+            : html`<pw-quizz-button
+                title="Next"
+                @click=${this.onNext}
+              ></pw-quizz-button>`}
         </div>
       </div>
     `;
   }
 
+  finalized() {
+    const finalizedEvent = new CustomEvent('finalized');
+
+    this.dispatchEvent(finalizedEvent);
+  }
+
   validatedAnswer(e) {
-   this.value.answer = e.detail;
+    this.value.answer = e.detail;
   }
 
   onNext() {

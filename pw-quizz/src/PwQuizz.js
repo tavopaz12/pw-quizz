@@ -8,6 +8,7 @@ export class PwQuizz extends LitElement {
 
   static get properties() {
     return {
+      score: Number,
       options: { type: Array },
       current: { type: Number },
       counterCorrect: { type: Number },
@@ -31,8 +32,11 @@ export class PwQuizz extends LitElement {
           ?hidden=${this.current !== index}
           @pw-item-next=${this.setNext}
           @pw-item-prev=${this.setPrev}
+          ?is-last=${index === this.options.length - 1}
+          @finalized=${this.finalized}
         ></pw-quizz-item>`
       )}
+      <h1>${this.score}</h1>
     `;
   }
 
@@ -49,5 +53,15 @@ export class PwQuizz extends LitElement {
       return;
     }
     this.current -= 1;
+  }
+
+  finalized() {
+    this.score = this.options.reduce((prev, current) => {
+      let add = 0;
+      if (current.answer === current.optionCorrect) {
+        add = 1;
+      }
+      return prev + add;
+    }, 0);
   }
 }
